@@ -33,7 +33,7 @@ public class CustomersController {
 
     //CUSTOMER CONTROLLER
     @PostMapping(value="/customers",consumes= MediaType.APPLICATION_JSON_VALUE,headers="Accept=application/json")
-    public ResponseEntity newCustomer(@RequestBody CustomerDTO customerDTO) throws CustomerUserNameExistsException, UserTypeDetailsNotFoundException {
+    public ResponseEntity newCustomer(@RequestHeader(value = "X-Access-Token") String accessToken , @RequestBody CustomerDTO customerDTO) throws CustomerUserNameExistsException, UserTypeDetailsNotFoundException {
         Customer customer =  customerService.acceptCustomerDetails(customerDTO);
         System.out.println(customer.toString());
         return ResponseEntity.ok(customer);
@@ -41,20 +41,20 @@ public class CustomersController {
 
     @GetMapping("/customers/{id}")
     @ResponseBody
-    public ResponseEntity getCustomerDetails(@PathVariable(name = "id") int id) throws CustomerDetailsNotFoundException {
+    public ResponseEntity getCustomerDetails(@RequestHeader(value = "X-Access-Token") String accessToken , @PathVariable(name = "id") int id) throws CustomerDetailsNotFoundException {
         System.out.println(customerService.getCustomerDetails(id).toString());
         Customer customer =  customerService.getCustomerDetails(id);
         return ResponseEntity.ok(customer);
     }
 
     @PutMapping("/customers/{id}")
-    public ResponseEntity updateCustomerDetails(@PathVariable(name = "id") int id , @RequestBody CustomerDTO customerDTO) throws CustomerDetailsNotFoundException, UserTypeDetailsNotFoundException {
+    public ResponseEntity updateCustomerDetails(@RequestHeader(value = "X-Access-Token") String accessToken , @PathVariable(name = "id") int id , @RequestBody CustomerDTO customerDTO) throws CustomerDetailsNotFoundException, UserTypeDetailsNotFoundException {
         Customer updatedCustomer =  customerService.updateCustomerDetails(id, customerDTO);
         return ResponseEntity.ok(updatedCustomer);
     }
 
     @GetMapping(value="/customers",produces=MediaType.APPLICATION_JSON_VALUE,headers="Accept=application/json")
-    public ResponseEntity findAllCustomers() {
+    public ResponseEntity findAllCustomers(@RequestHeader(value = "X-Access-Token") String accessToken) {
         List<Customer> customers = customerService.getAllCustomerDetails();
         System.out.println("Number of customers :" + customers.size());
         return ResponseEntity.ok(customers);
@@ -62,14 +62,14 @@ public class CustomersController {
 
     @DeleteMapping("/customers/{id}")
     @ResponseBody
-    public ResponseEntity<String> removeCustomerDetails(@PathVariable(name = "id") int id) throws CustomerDetailsNotFoundException{
+    public ResponseEntity<String> removeCustomerDetails(@RequestHeader(value = "X-Access-Token") String accessToken , @PathVariable(name = "id") int id) throws CustomerDetailsNotFoundException{
         customerService.deleteCustomer(id);
         return new ResponseEntity<>("Customer details successfully removed ",HttpStatus.OK);
     }
 
 
     @GetMapping(value="/customers/{customerId}/bookings",produces=MediaType.APPLICATION_JSON_VALUE,headers="Accept=application/json")
-    public ResponseEntity getAllBookingsForCustomer(@PathVariable("customerId") int id) throws CustomerDetailsNotFoundException {
+    public ResponseEntity getAllBookingsForCustomer(@RequestHeader(value = "X-Access-Token") String accessToken, @PathVariable("customerId") int id) throws CustomerDetailsNotFoundException {
         Customer customer = customerService.getCustomerDetails(id);
         List<Booking> bookings = customer.getBookings();
         return  ResponseEntity.ok(bookings);
@@ -77,7 +77,7 @@ public class CustomersController {
 
     //check this
     @DeleteMapping(value="/customers/{customerId}/bookings",produces=MediaType.APPLICATION_JSON_VALUE,headers="Accept=application/json")
-    public ResponseEntity<String> deleteBookingForCustomer(@PathVariable("customerId") int customerId) throws CustomerDetailsNotFoundException, BookingDetailsNotFoundException {
+    public ResponseEntity<String> deleteBookingForCustomer(@RequestHeader(value = "X-Access-Token") String accessToken , @PathVariable("customerId") int customerId) throws CustomerDetailsNotFoundException, BookingDetailsNotFoundException {
         Customer customer = customerService.getCustomerDetails(customerId);
         List<Booking> bookings =  customer.getBookings();
         for(Booking booking : bookings){

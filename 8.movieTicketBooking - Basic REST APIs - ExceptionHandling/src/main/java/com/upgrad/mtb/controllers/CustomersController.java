@@ -36,6 +36,7 @@ public class CustomersController {
     public ResponseEntity newCustomer(@RequestBody CustomerDTO customerDTO) throws CustomerUserNameExistsException, UserTypeDetailsNotFoundException {
         Customer customer =  customerService.acceptCustomerDetails(customerDTO);
         System.out.println(customer.toString());
+        
         return ResponseEntity.ok(customer);
     }
 

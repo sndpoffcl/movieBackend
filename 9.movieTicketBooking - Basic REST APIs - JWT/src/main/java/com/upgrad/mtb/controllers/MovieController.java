@@ -26,50 +26,49 @@ public class MovieController {
     @Autowired
     TheatreService theatreService;
 
-    @RequestMapping(value= {"/sayHelloMovie"},method= RequestMethod.GET)
-    public ResponseEntity<String> sayHello(){
+    @RequestMapping(value = {"/sayHelloMovie"}, method = RequestMethod.GET)
+    public ResponseEntity<String> sayHello() {
         return new ResponseEntity<String>("Hello World To All From MovieController", HttpStatus.OK);
     }
 
     //MOVIE CONTROLLER
-    @PostMapping(value="/movies",consumes= MediaType.APPLICATION_JSON_VALUE,headers="Accept=application/json")
-    public ResponseEntity newMovie(@RequestBody MovieDTO movieDTO) throws StatusDetailsNotFoundException, LanguageDetailsNotFoundException {
-       Movie movie  =   movieService.
-               acceptMovieDetails(movieDTO);
-       return ResponseEntity.ok(movie);
+    @PostMapping(value = "/movies", consumes = MediaType.APPLICATION_JSON_VALUE, headers = "Accept=application/json")
+    public ResponseEntity newMovie(@RequestHeader(value = "X-Access-Token") String accessToken, @RequestBody MovieDTO movieDTO) throws StatusDetailsNotFoundException, LanguageDetailsNotFoundException {
+        Movie movie = movieService.acceptMovieDetails(movieDTO);
+        return ResponseEntity.ok(movie);
     }
 
     @GetMapping("/movies/{id}")
-    public ResponseEntity getMovieDetails(@PathVariable(name = "id") int id) throws MovieDetailsNotFoundException {
+    public ResponseEntity getMovieDetails(@RequestHeader(value = "X-Access-Token") String accessToken, @PathVariable(name = "id") int id) throws MovieDetailsNotFoundException {
         Movie movie = movieService.getMovieDetails(id);
         return ResponseEntity.ok(movie);
     }
 
-    @PutMapping(value="/movies/{id}",consumes= MediaType.APPLICATION_JSON_VALUE,headers="Accept=application/json")
-    public ResponseEntity updateMovieDetails(@PathVariable(name = "id") int id, @RequestBody MovieDTO movieDTO) throws MovieDetailsNotFoundException, StatusDetailsNotFoundException, LanguageDetailsNotFoundException {
-        return  ResponseEntity.ok(movieService.updateMovieDetails(id,movieDTO));
+    @PutMapping(value = "/movies/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, headers = "Accept=application/json")
+    public ResponseEntity updateMovieDetails(@RequestHeader(value = "X-Access-Token") String accessToken, @PathVariable(name = "id") int id, @RequestBody MovieDTO movieDTO) throws MovieDetailsNotFoundException, StatusDetailsNotFoundException, LanguageDetailsNotFoundException {
+        return ResponseEntity.ok(movieService.updateMovieDetails(id, movieDTO));
     }
 
-    @GetMapping(value="/movies",produces=MediaType.APPLICATION_JSON_VALUE,headers="Accept=application/json")
-    public ResponseEntity findAllMovies() {
+    @GetMapping(value = "/movies", produces = MediaType.APPLICATION_JSON_VALUE, headers = "Accept=application/json")
+    public ResponseEntity findAllMovies(@RequestHeader(value = "X-Access-Token") String accessToken) {
         List<Movie> movies = movieService.getAllMoviesDetails();
-        return  ResponseEntity.ok(movies);
+        return ResponseEntity.ok(movies);
     }
 
     @DeleteMapping("/movies/{id}")
-    public ResponseEntity<String> removeMovieDetails(@PathVariable(name = "id") int id) throws MovieDetailsNotFoundException{
+    public ResponseEntity<String> removeMovieDetails(@RequestHeader(value = "X-Access-Token") String accessToken, @PathVariable(name = "id") int id) throws MovieDetailsNotFoundException {
         movieService.deleteMovie(id);
-        return new ResponseEntity<>("Movie details successfully removed ",HttpStatus.OK);
+        return new ResponseEntity<>("Movie details successfully removed ", HttpStatus.OK);
     }
 
-    @GetMapping(value="/movies/{movieId}/theatres",produces=MediaType.APPLICATION_JSON_VALUE,headers="Accept=application/json")
-    public ResponseEntity findAllTheatresForMovie(@PathVariable("movieId") int movieId) throws MovieDetailsNotFoundException {
+    @GetMapping(value = "/movies/{movieId}/theatres", produces = MediaType.APPLICATION_JSON_VALUE, headers = "Accept=application/json")
+    public ResponseEntity findAllTheatresForMovie(@RequestHeader(value = "X-Access-Token") String accessToken, @PathVariable("movieId") int movieId) throws MovieDetailsNotFoundException {
         Movie movie = movieService.getMovieDetails(movieId);
         return ResponseEntity.ok(movie.getTheatres());
     }
 
-    @DeleteMapping(value="/movies/{movieId}/theatres/{theatreId}",produces=MediaType.APPLICATION_JSON_VALUE,headers="Accept=application/json")
-    public ResponseEntity removeTheatreForMovie(@PathVariable("movieId") int movieId , @PathVariable("theatreId") int theatreId) throws MovieDetailsNotFoundException, TheatreDetailsNotFoundException {
+    @DeleteMapping(value = "/movies/{movieId}/theatres/{theatreId}", produces = MediaType.APPLICATION_JSON_VALUE, headers = "Accept=application/json")
+    public ResponseEntity removeTheatreForMovie(@RequestHeader(value = "X-Access-Token") String accessToken, @PathVariable("movieId") int movieId, @PathVariable("theatreId") int theatreId) throws MovieDetailsNotFoundException, TheatreDetailsNotFoundException {
         Theatre theatre = theatreService.getTheatreDetails(theatreId);
         theatre.setMovie(null);
         Movie movie = movieService.getMovieDetails(movieId);

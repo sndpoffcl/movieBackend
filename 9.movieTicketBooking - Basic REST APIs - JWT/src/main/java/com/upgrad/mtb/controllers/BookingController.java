@@ -28,26 +28,26 @@ public class BookingController {
 
     //BOOKING CONTROLLER
     @PostMapping(value="/bookings",consumes= MediaType.APPLICATION_JSON_VALUE,headers="Accept=application/json")
-    public ResponseEntity newBooking(@RequestBody BookingDTO bookingDTO) throws TheatreDetailsNotFoundException, CustomerDetailsNotFoundException, BookingFailedException {
+    public ResponseEntity newBooking(@RequestHeader(value = "X-Access-Token") String accessToken , @RequestBody BookingDTO bookingDTO) throws TheatreDetailsNotFoundException, CustomerDetailsNotFoundException, BookingFailedException {
        Booking booking = bookingService.acceptBookingDetails(bookingDTO);
        return ResponseEntity.ok(booking);
     }
 
     @GetMapping("/bookings/{id}")
-    public ResponseEntity getBookingDetails(@PathVariable("id") int id) throws BookingDetailsNotFoundException {
+    public ResponseEntity getBookingDetails(@RequestHeader(value = "X-Access-Token") String accessToken , @PathVariable("id") int id ) throws BookingDetailsNotFoundException {
         System.out.println(bookingService.getBookingDetails(id).toString());
         Booking booking =  bookingService.getBookingDetails(id);
         return ResponseEntity.ok(booking);
     }
 
     @GetMapping(value="/bookings",produces=MediaType.APPLICATION_JSON_VALUE,headers="Accept=application/json")
-    public ResponseEntity findAllBookings() {
+    public ResponseEntity findAllBookings(@RequestHeader(value = "X-Access-Token") String accessToken) {
         List<Booking> bookings = bookingService.getAllBookingDetails();
         return ResponseEntity.ok(bookings);
     }
 
     @DeleteMapping("/bookings/{id}")
-    public ResponseEntity<String> removeBookingDetails(@PathVariable("id") int id) throws BookingDetailsNotFoundException{
+    public ResponseEntity<String> removeBookingDetails(@RequestHeader(value = "X-Access-Token") String accessToken , @PathVariable("id") int id) throws BookingDetailsNotFoundException{
         bookingService.deleteBooking(id);
         return new ResponseEntity<>("Booking details successfully removed ",HttpStatus.OK);
     }

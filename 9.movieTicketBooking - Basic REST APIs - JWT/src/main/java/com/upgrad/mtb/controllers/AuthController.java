@@ -24,11 +24,6 @@ import org.springframework.web.bind.annotation.*;
 import java.util.HashMap;
 import java.util.Map;
 
-
-
-/**
- * Created by Vishwa Mohan, 19th April 2019
- */
 @Controller
 public class AuthController {
 
@@ -41,15 +36,9 @@ public class AuthController {
     @Autowired
     CustomerServiceImpl customerService;
 
-    /**
-     *
-     * @param data
-     * @return
-     */
     @RequestMapping(method = RequestMethod.POST, value = "/access-tokens")
     @ResponseBody
     public ResponseEntity signIn(@RequestBody LoginDTO data) {
-
         try {
 
             String username = data.getUsername();
@@ -82,11 +71,6 @@ public class AuthController {
         }
     }
 
-    /**
-     *
-     * @param data
-     * @return
-     */
     @RequestMapping(method = RequestMethod.DELETE, value = "/access-tokens")
     @ResponseBody
     public ResponseEntity signOut(@RequestBody RefreshTokenRequest data) throws CustomException {
@@ -106,11 +90,7 @@ public class AuthController {
         }
     }
 
-    /**
-     *
-     * @param data
-     * @return
-     */
+
     @RequestMapping(method = RequestMethod.POST, value = "/access-tokens/refresh")
     @ResponseBody
     public ResponseEntity refreshToken(@RequestBody RefreshTokenRequest data) throws CustomException {
@@ -139,11 +119,7 @@ public class AuthController {
         }
     }
 
-    /**
-     *
-     * @param data
-     * @return
-     */
+
     @RequestMapping(method = RequestMethod.POST, value = "/users")
     @ResponseBody
     public ResponseEntity signUp(@RequestBody CustomerDTO data) throws CustomException {
@@ -173,11 +149,7 @@ public class AuthController {
         }
     }
 
-    /**
-     *
-     * @param accessToken
-     * @return
-     */
+
     @RequestMapping(method = RequestMethod.GET, value = "/me")
     @ResponseBody
     public ResponseEntity getUserDetails(@RequestHeader(value = "X-Access-Token") String accessToken) {
